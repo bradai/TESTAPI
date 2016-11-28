@@ -31,6 +31,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ApiController extends AbstractApiController{
 
 
+
+    /**
+     * Récupère la liste des articles
+     *
+     * @Route ("/api/articles", name="api_list_articles")
+     * @Method("GET")
+
+     */
+    public function listAction(){
+
+        $articles = $this->getDoctrine()->getRepository('AppBundle:Article')->findAll();
+
+        if($articles) {
+            return $this->sendResponseSuccess($articles);
+        }else {
+            return $this->sendResponseError("pas articles");
+        }
+
+    }
+
+
     /**
      * Récupère la liste des articles
      *
@@ -44,33 +65,12 @@ class ApiController extends AbstractApiController{
         if($article instanceof Article) {
             return $this->sendResponseSuccess($article);
         }else {
-            return $this->sendResponseError("Il existe pas un article avec slug", Response::HTTP_OK);
+            return $this->sendResponseError("Il existe pas un article avec id", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    /**
-     * Récupère la liste des articles
-     *
-     * @Route ("/api/articles/{slug}", name="api_list_articles")
-     * @Method("GET")
 
-     */
-    public function listAction(){
-
-        $articles = $this->getDoctrine()->getRepository('AppBundle:Article')->findAll();
-        $articleTable = [];
-        foreach($articles as $article) {
-            $articleTable[] = $article;
-        }
-
-        if(!$articleTable) {
-            return $this->sendResponseSuccess($articleTable);
-        }else {
-            return $this->sendResponseError("pas liste");
-        }
-
-    }
 
 
 
@@ -106,7 +106,7 @@ class ApiController extends AbstractApiController{
      * delete article
      *
      * @Route ("/api/articles/{id}", name="api_delete_article")
-     * @Method("GET")
+     * @Method("DELETE")
 
      */
     public function deleteAction($id){
